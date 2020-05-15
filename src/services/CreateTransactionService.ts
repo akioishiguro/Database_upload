@@ -1,7 +1,7 @@
 import { getCustomRepository, getRepository } from 'typeorm';
 
-// import AppError from '../errors/AppError';
-// import TransactionRepository from '../repositories/TransactionsRepository';
+import AppError from '../errors/AppError';
+import TransactionRepository from '../repositories/TransactionsRepository';
 
 import Transaction from '../models/Transaction';
 import Category from '../models/Category';
@@ -20,15 +20,19 @@ class CreateTransactionService {
     value,
     category,
   }: Request): Promise<Transaction> {
-    const transactionRepository = getRepository(Transaction);
+    const transactionRepository = getCustomRepository(TransactionRepository);
     const categoryRepository = getRepository(Category);
+
+    const balance = await transactionRepository.getBalance();
+
+    if (type === 'outcome' && value > balance.total) {
+      throw new AppError('Its outcome is greater than the total ');
+    }
 
     // Procuro se a Categoria ja existe
     let checkCategoryAlreadyExists = await categoryRepository.findOne({
       where: { title: category },
     });
-
-    console.log(checkCategoryAlreadyExists);
 
     if (!checkCategoryAlreadyExists) {
       checkCategoryAlreadyExists = categoryRepository.create({
