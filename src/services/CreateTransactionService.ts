@@ -25,6 +25,10 @@ class CreateTransactionService {
 
     const balance = await transactionRepository.getBalance();
 
+    if (type !== 'income' && type !== 'outcome') {
+      throw new AppError('Invalid operation');
+    }
+
     if (type === 'outcome' && value > balance.total) {
       throw new AppError('Its outcome is greater than the total ');
     }
