@@ -36,7 +36,7 @@ class ImportTransactionsService {
     const transactions: CSVTransaction[] = [];
     const categories: string[] = [];
 
-    const balance = await transactionRepository.getBalance();
+    // const balance = await transactionRepository.getBalance();
 
     parseCSV.on('data', async line => {
       const [title, type, value, category] = line.map((cell: string) =>
@@ -46,9 +46,9 @@ class ImportTransactionsService {
       // Verifica se todos os dados estão presentes
       if (!title || !type || !value) return;
 
-      if (type !== 'income' && type !== 'outcome') return;
+      /* if (type !== 'income' && type !== 'outcome') return;
 
-      if (type === 'outcome' && value > balance.total) return;
+      if (type === 'outcome' && value > balance.total) return; */
 
       categories.push(category);
 
